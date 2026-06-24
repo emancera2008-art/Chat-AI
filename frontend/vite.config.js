@@ -7,5 +7,7 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3001',
     },
+    // Return index.html for any unknown route so React Router handles navigation
+    historyApiFallback: true,
   },
 });

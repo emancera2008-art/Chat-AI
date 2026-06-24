@@ -25,6 +25,12 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
 app.use(express.json());
 
+// Serve built frontend from backend (production / single-server mode)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+}
+
 // Initialize DB
 getDb();
 
@@ -46,6 +52,14 @@ app.get('/api/privacy', (req, res) => {
     retentionPolicy: 'Conversation history is stored locally and can be deleted at any time by the user.',
   });
 });
+
+// SPA catch-all — must come AFTER all /api routes so refreshing /chat or /admin
+// always returns index.html instead of 404
+if (fs.existsSync(frontendDist)) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);

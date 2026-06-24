@@ -56,8 +56,12 @@ export default function ChatPage() {
   const initials = user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   const loadConversations = useCallback(async () => {
-    const { data } = await api.get('/chat/conversations');
-    setConversations(data);
+    try {
+      const { data } = await api.get('/chat/conversations');
+      setConversations(data);
+    } catch {
+      // backend unreachable — keep empty list, don't crash
+    }
   }, []);
 
   useEffect(() => { loadConversations(); }, [loadConversations]);
