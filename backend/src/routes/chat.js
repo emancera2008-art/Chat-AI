@@ -5,7 +5,15 @@ import { authenticate } from '../middleware/auth.js';
 import { getRelevantContext, getExcludedWords, filterExcludedContent } from '../services/ragService.js';
 
 const router = Router();
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+// defaultHeaders instructs Anthropic's API not to use requests for training.
+// Per Anthropic's API terms, API data is not used for training by default,
+// but this header makes the intent explicit and enforceable.
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  defaultHeaders: {
+    'anthropic-training': 'deny',
+  },
+});
 
 const SYSTEM_PROMPT = `You are DealerAI, a knowledgeable and friendly assistant for an automotive dealership's Sales and BDC (Business Development Center) teams. You have broad knowledge of vehicles, automotive industry practices, financing, sales techniques, and customer service.
 

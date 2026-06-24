@@ -36,6 +36,17 @@ app.use('/api/chat', chatRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
+// Privacy info endpoint — confirms data handling policy to the frontend
+app.get('/api/privacy', (req, res) => {
+  res.json({
+    dataTraining: false,
+    dataStorageLocation: 'local — all conversations, documents, and user data are stored only on this server',
+    thirdPartySharing: 'none — chat messages are sent to the Anthropic API for inference only, with training opted out via API header',
+    anthropicApiPolicy: 'https://www.anthropic.com/policies/api-data-usage',
+    retentionPolicy: 'Conversation history is stored locally and can be deleted at any time by the user.',
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
 });
